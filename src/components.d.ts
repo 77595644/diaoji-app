@@ -16,18 +16,12 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     TabBar: typeof import('./components/TabBar.vue')['default']
     VanButton: typeof import('vant/es')['Button']
-    VanDivider: typeof import('vant/es')['Divider']
-    VanField: typeof import('vant/es')['Field']
-    VanList: typeof import('vant/es')['List']
     VanLoading: typeof import('vant/es')['Loading']
     VanOverlay: typeof import('vant/es')['Overlay']
-    VanPicker: typeof import('vant/es')['Picker']
     VanPopup: typeof import('vant/es')['Popup']
     VanProgress: typeof import('vant/es')['Progress']
-    VanPullRefresh: typeof import('vant/es')['PullRefresh']
     VanSearch: typeof import('vant/es')['Search']
     VanSwipe: typeof import('vant/es')['Swipe']
     VanSwipeItem: typeof import('vant/es')['SwipeItem']
-    VanUploader: typeof import('vant/es')['Uploader']
   }
 }

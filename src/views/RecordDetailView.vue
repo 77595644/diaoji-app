@@ -130,6 +130,7 @@ const route = useRoute()
 const record = ref<any>(null)
 const loading = ref(true)
 const generating = ref(false)
+const swipeIndex = ref(0)
 
 // 轮播图列表：优先 photos JSON数组，兼容 photoUrl 单图
 const displayPhotos = computed(() => {

@@ -264,9 +264,9 @@ const share = (post: any) => {
   alert('长按图片保存分享')
 }
 
-const previewImage = (photos: string[], index: number) => {
+const previewImage = (photos: string[], index: number | string) => {
   // 可以用 window.open 或者第三方图片预览库
-  alert(`预览第 ${index + 1} 张图片`)
+  alert(`预览第 ${Number(index) + 1} 张图片`)
 }
 </script>
 

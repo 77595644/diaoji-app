@@ -1,6 +1,6 @@
 // 腾讯地图 JS SDK 类型声明
 declare namespace qq {
-  function maps = {
+  const maps: {
     key: string
   }
   namespace maps {

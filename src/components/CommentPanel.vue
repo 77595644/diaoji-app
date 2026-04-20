@@ -49,11 +49,21 @@
                 >{{ comment._expanded ? '收起' : '展开' }}</div>
                 <!-- 回复列表 -->
                 <div v-if="comment.replies?.length" class="reply-list">
-                  <div v-for="reply in comment.replies" :key="reply.id" class="reply-item">
-                    <span class="reply-nickname">{{ reply.user?.nickname || '匿名钓友' }}</span>
-                    <span v-if="reply.reply_to_nickname" class="reply-to"> 回复 {{ reply.replyToNickname || reply.reply_to_nickname }}</span>
-                    <span class="reply-text">{{ reply.content }}</span>
-                  </div>
+                  <!-- 展开/收起回复列表 -->
+                  <div 
+                    v-if="!comment._repliesExpanded" 
+                    class="replies-toggle"
+                    @click="comment._repliesExpanded = true"
+                  >展开 {{ comment.replies.length }} 条回复</div>
+                  <template v-else>
+                    <div v-for="reply in comment.replies" :key="reply.id" class="reply-item">
+                      <span class="reply-nickname">{{ reply.user?.nickname || '匿名钓友' }}</span>
+                      <span v-if="reply.replyToNickname" class="reply-to"> 回复 {{ reply.replyToNickname }}</span>
+                      <span class="reply-text">{{ reply.content }}</span>
+                      <span class="reply-btn" @click="handleReply(reply)">回复</span>
+                    </div>
+                    <div class="replies-toggle" @click="comment._repliesExpanded = false">收起</div>
+                  </template>
                 </div>
                 <!-- 操作按钮 -->
                 <div class="comment-actions">
@@ -121,6 +131,7 @@ const hasMore = ref(true)
 const inputText = ref('')
 const replyingTo = ref<string | null>(null)
 const replyingCommentId = ref<number | null>(null)
+const replyingParentId = ref<number | null>(null)  // 顶级评论ID，用于嵌套显示
 const listRef = ref<HTMLElement>()
 const deleteTarget = ref<any>(null)
 
@@ -135,6 +146,7 @@ watch(() => props.show, async (val) => {
     inputText.value = ''
     replyingTo.value = null
     replyingCommentId.value = null
+    replyingParentId.value = null
     deleteTarget.value = null
 
     // 获取当前用户ID
@@ -158,6 +170,8 @@ const loadComments = async () => {
     // 标记是否为自己的评论
     records = records.map((c: any) => ({
       ...c,
+      _expanded: false,  // 简介默认收起
+      _repliesExpanded: false,  // 回复列表默认收起
       user: {
         id: c.user_id || c.userId,
         nickname: c.nickname || '匿名钓友',
@@ -166,6 +180,7 @@ const loadComments = async () => {
       // 处理回复列表的平铺字段
       replies: (c.replies || []).map((r: any) => ({
         ...r,
+        _expanded: false,  // 回复默认收起
         user: {
           id: r.user_id || r.userId,
           nickname: r.nickname || '匿名钓友',
@@ -215,10 +230,24 @@ const handleSend = async () => {
     })
     // 后端只返回 commentId，用本地临时评论直接展示
     if (!replyingCommentId.value) {
+      // 新评论：插入列表顶部
       comments.value.unshift(tempComment)
     } else {
-      // 回复：也插入列表顶部显示
-      comments.value.unshift(tempComment)
+      // 回复：找到被回复的评论，添加到它的 replies 数组
+      // replyingParentId 是顶级评论ID（回复顶级评论时=自己，回复回复时=顶级评论）
+      const parentComment = comments.value.find(c => c.id === replyingParentId.value)
+      if (parentComment) {
+        if (!parentComment.replies) parentComment.replies = []
+        parentComment.replies.push({
+          ...tempComment,
+          parentId: replyingCommentId.value,  // 回复的是哪条评论
+          reply_to_comment_id: replyingCommentId.value,
+          replyToNickname: replyingTo.value,
+        })
+      } else {
+        // 如果找不到父评论，添加到列表顶部
+        comments.value.unshift(tempComment)
+      }
     }
 
     inputText.value = ''
@@ -237,13 +266,25 @@ const handleSend = async () => {
 }
 
 const handleReply = (comment: any) => {
+  // comment 可能是顶级评论，也可能是回复
+  // 如果是回复，需要找到它的顶级父评论ID
   replyingTo.value = comment.user?.nickname || '匿名钓友'
   replyingCommentId.value = comment.id
+  // 如果 comment 有 parentId，说明它是回复，需要找到它的顶级父评论
+  if (comment.parentId && comment.parentId !== 0) {
+    // 查找这个回复属于哪个顶级评论
+    const parent = comments.value.find(c => c.id === comment.parentId)
+    replyingParentId.value = parent ? parent.id : comment.parentId
+  } else {
+    // 顶级评论
+    replyingParentId.value = comment.id
+  }
 }
 
 const cancelReply = () => {
   replyingTo.value = null
   replyingCommentId.value = null
+  replyingParentId.value = null
 }
 
 const handleDelete = (comment: any) => {
@@ -364,11 +405,17 @@ const formatTime = (time: string) => {
 .reply-list {
   margin-top: 6px; background: #F5F7FA; border-radius: 6px; padding: 8px 10px;
 }
+.replies-toggle {
+  font-size: 12px; color: #0D7377; cursor: pointer; padding: 2px 0;
+}
 .reply-item { font-size: 13px; line-height: 1.6; color: #374151; }
 .reply-item + .reply-item { margin-top: 4px; }
 .reply-nickname { color: #0D7377; font-weight: 600; }
 .reply-to { color: #9CA3AF; }
-.reply-text { color: #374151; }
+.reply-text { color: #374151; margin-left: 4px; }
+.reply-item .reply-btn {
+  margin-left: 8px; font-size: 12px; color: #6B7280; cursor: pointer;
+}
 .expand-hint {
   font-size: 12px; color: #0D7377; cursor: pointer; margin-top: 2px;
 }
