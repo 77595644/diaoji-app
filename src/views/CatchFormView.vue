@@ -2,7 +2,7 @@
   <div class="catch-form">
     <div class="form-header">
       <span class="back" @click="$router.back()">←</span>
-      <span class="title">记录渔获</span>
+      <span class="title">{{ isEdit ? '编辑渔获' : '记录渔获' }}</span>
       <span class="placeholder"></span>
     </div>
 
@@ -91,7 +91,7 @@
         :disabled="!canNext"
         @click="nextStep"
       >
-        {{ step === 3 ? '保存记录 🎣' : '下一步' }}
+        {{ isEdit ? '更新记录 ✏️' : step === 3 ? '保存记录 🎣' : '下一步' }}
       </button>
     </div>
 
@@ -166,6 +166,10 @@ const form = ref({
   spotName: '',
 })
 
+// 编辑模式
+const isEdit = ref(false)
+const editRecordId = ref<number | null>(null)
+
 const feelings = [
   { value: '好', label: '🟢 好' },
   { value: '一般', label: '🟡 一般' },
@@ -183,18 +187,50 @@ const canNext = computed(() => {
 })
 
 onMounted(async () => {
+  // 编辑模式：URL 传了 recordId
+  const recordIdFromUrl = route.query.recordId
+  if (recordIdFromUrl) {
+    isEdit.value = true
+    editRecordId.value = Number(recordIdFromUrl)
+    try {
+      const res: any = await catchApi.detail(Number(recordIdFromUrl))
+      const rec: any = res?.data || res
+      if (rec) {
+        form.value.fishSpecies = rec.fishSpecies || ''
+        form.value.weight = rec.weight || null
+        form.value.quantity = rec.quantity || 1
+        form.value.length = rec.length || null
+        form.value.fishFeeling = rec.fishFeeling || ''
+        form.value.note = rec.note || ''
+        form.value.spotId = rec.spotId || null
+        form.value.spotName = rec.spotName || ''
+        // 回填图片
+        if (rec.photoUrl) photos.value = [rec.photoUrl]
+        if (rec.photos) {
+          try { photos.value = JSON.parse(rec.photos) } catch {}
+        }
+      }
+    } catch {
+      alert('无法加载渔获数据')
+      router.back()
+      return
+    }
+  }
+
   const spotIdFromUrl = route.query.spotId
   const spotNameFromUrl = route.query.spotName
-  
+
   if (spotIdFromUrl && spotNameFromUrl) {
     form.value.spotId = Number(spotIdFromUrl)
     form.value.spotName = decodeURIComponent(spotNameFromUrl as string)
   }
-  
+
+  if (isEdit.value) return  // 编辑模式不需要加载附近钓点列表
+
   try {
     const res: any = await spotApi.nearby(23.12, 113.32, 1, 50)
     spots.value = res?.data?.records || res?.data?.list || res?.data || []
-    
+
     if (form.value.spotId && !spots.value.find((s: any) => s.id === form.value.spotId)) {
       spots.value.unshift({
         id: form.value.spotId,
@@ -258,6 +294,10 @@ const skipSpot = () => {
 }
 
 const nextStep = () => {
+  if (isEdit.value) {
+    save()
+    return
+  }
   if (step.value < 3) {
     step.value++
   } else {
@@ -275,16 +315,21 @@ const save = async () => {
       fishFeeling: form.value.fishFeeling,
       note: form.value.note,
       spotId: form.value.spotId,
-      photoUrl: photos.value[0] || '',   // 第一张图兼容旧字段
-      photos: photos.value,              // 全部图片base64数组
+      photoUrl: photos.value[0] || '',
+      photos: photos.value,
     }
-    await catchApi.add(data)
-    alert('记录成功！🎉')
-    router.replace('/')
+    if (isEdit.value && editRecordId.value) {
+      await catchApi.update(editRecordId.value, data)
+      alert('更新成功！✏️')
+      router.replace('/record/' + editRecordId.value)
+    } else {
+      await catchApi.add(data)
+      alert('记录成功！🎉')
+      router.replace('/')
+    }
   } catch (e: any) {
     console.error('保存失败', e)
-    alert('已保存到本地（演示模式）')
-    router.replace('/')
+    alert('保存失败，请重试')
   }
 }
 </script>

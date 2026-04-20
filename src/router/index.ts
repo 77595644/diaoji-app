@@ -10,6 +10,8 @@ import LoginView from '@/views/LoginView.vue'
 import MyRecordsView from '@/views/MyRecordsView.vue'
 import MySpotsView from '@/views/MySpotsView.vue'
 import RecordDetailView from '@/views/RecordDetailView.vue'
+import HotRankingView from '@/views/HotRankingView.vue'
+import UserProfileView from '@/views/UserProfileView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,6 +26,8 @@ const router = createRouter({
     { path: '/my-records', component: MyRecordsView, name: 'my-records' },
     { path: '/my-spots', component: MySpotsView, name: 'my-spots' },
     { path: '/record/:id', component: RecordDetailView, name: 'record-detail' },
+    { path: '/hot-ranking', component: HotRankingView, name: 'hot-ranking' },
+    { path: '/user-profile/:userId', component: UserProfileView, name: 'user-profile' },
   ],
 })
 

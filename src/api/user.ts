@@ -101,6 +101,12 @@ export const catchApi = {
   detail(id: number) {
     return request.get(`/catch/${id}`)
   },
+  update(id: number, data: any) {
+    return request.put(`/catch/${id}`, data)
+  },
+  delete(id: number) {
+    return request.delete(`/catch/${id}`)
+  },
   generatePoster(id: number) {
     return request.post(`/catch/${id}/poster`)
   },

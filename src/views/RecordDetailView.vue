@@ -99,8 +99,13 @@
       </div>
 
       <!-- 操作按钮 -->
-      <div class="actions">
-        <van-button type="primary" block @click="generatePoster">生成战绩海报</van-button>
+      <div class="actions" v-if="isSelf">
+        <van-button type="danger" plain block @click="doDelete">🗑 删除记录</van-button>
+        <van-button type="default" plain block @click="goEdit" style="margin-top:10px">✏️ 编辑记录</van-button>
+        <van-button type="primary" block @click="generatePoster" style="margin-top:10px">📄 生成战绩海报</van-button>
+      </div>
+      <div class="actions" v-else>
+        <van-button type="primary" block @click="generatePoster">📄 生成战绩海报</van-button>
       </div>
     </div>
 
@@ -123,7 +128,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { catchApi } from '@/api/user'
-import { showToast, showConfirmDialog, showImagePreview } from 'vant'
+import { showToast, showConfirmDialog, showImagePreview, showLoadingToast, closeToast } from 'vant'
 
 const router = useRouter()
 const route = useRoute()
@@ -131,6 +136,20 @@ const record = ref<any>(null)
 const loading = ref(true)
 const generating = ref(false)
 const swipeIndex = ref(0)
+
+// 当前登录用户ID
+const currentUserId = computed(() => {
+  try {
+    const token = localStorage.getItem('token') || ''
+    const payload = JSON.parse(atob(token.split('.')[1]))
+    return Number(payload.userId || payload.sub || 0)
+  } catch { return 0 }
+})
+
+// 是否是自己的渔获
+const isSelf = computed(() => {
+  return currentUserId.value > 0 && currentUserId.value === record.value?.userId
+})
 
 // 轮播图列表：优先 photos JSON数组，兼容 photoUrl 单图
 const displayPhotos = computed(() => {
@@ -186,6 +205,25 @@ const generatePoster = async () => {
     showToast('生成失败')
   } finally {
     generating.value = false
+  }
+}
+
+const goEdit = () => {
+  if (!record.value?.id) return
+  router.push({ path: '/catch', query: { recordId: record.value.id } })
+}
+
+const doDelete = async () => {
+  if (!record.value?.id) return
+  try {
+    await showConfirmDialog({ title: '确认删除', message: '确定删除这条渔获记录吗？删除后不可恢复。' })
+    showLoadingToast({ message: '删除中...', forbidClick: true, duration: 0 })
+    await catchApi.delete(record.value.id)
+    closeToast()
+    showToast({ message: '已删除', onClose: () => router.replace('/my-records') })
+  } catch (e: any) {
+    closeToast()
+    showToast(e?.response?.data?.message || '删除失败，无权限')
   }
 }
 

@@ -10,6 +10,6 @@ import TabBar from '@/components/TabBar.vue'
 
 const route = useRoute()
 const showTabBar = computed(() => {
-  return ['/home', '/spot', '/feed', '/profile'].includes(route.path)
+  return ['/', '/spot', '/feed', '/profile'].includes(route.path)
 })
 </script>
