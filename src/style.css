@@ -1,0 +1,41 @@
+/* 钓迹 App — 全局样式 */
+:root {
+  --diaoji-primary: #0D7377;
+  --diaoji-accent: #FF8C42;
+  --diaoji-bg: #F5F7FA;
+  --diaoji-text: #1A2634;
+  --diaoji-text-secondary: #6B7280;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: var(--diaoji-bg);
+  color: var(--diaoji-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 去掉路由跳转时的全局滚动条 */
+#app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: white;
+}
+
+/* Vant 主题覆盖 */
+:root {
+  --van-primary-color: #0D7377;
+  --van-primary-color: #0D7377;
+}
+
+/* 进度条颜色 */
+.van-progress__pivot {
+  background-color: #0D7377 !important;
+}
