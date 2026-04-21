@@ -113,7 +113,7 @@ function switchPeriod(p: string) {
 }
 
 function goSpot(spot: any) {
-  router.push(`/spot/${spot.spotId}`)
+  router.push({ path: '/spot', query: { spotId: spot.spotId } })
 }
 
 onMounted(loadData)

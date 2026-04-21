@@ -20,7 +20,7 @@
           v-for="(spot, index) in hotSpots.slice(0, 3)"
           :key="spot.spotId"
           class="heat-item"
-          @click.stop="$router.push(`/spot/${spot.spotId}`)"
+          @click.stop="$router.push({ path: '/spot', query: { spotId: spot.spotId } })"
         >
           <div class="heat-rank" :class="rankClass(index)">
             {{ index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉' }}
@@ -120,7 +120,7 @@
           v-for="spot in nearbySpots.slice(0, 3)"
           :key="spot.spotId"
           class="spot-card"
-          @click="$router.push(`/spot/${spot.spotId}`)"
+          @click="$router.push({ path: '/spot', query: { spotId: spot.spotId } })"
         >
           <div class="spot-top">
             <div class="spot-name">{{ spot.spotName }}</div>
@@ -211,9 +211,11 @@ onMounted(async () => {
     const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 })
     })
+    city.value = '已定位'
     await fetchWithLocation(pos.coords.latitude, pos.coords.longitude)
   } catch {
-    // 定位失败，用默认位置
+    // 定位失败，用默认位置（广州）
+    city.value = '广州'
     await fetchWithLocation(23.12, 113.32)
   }
 })

@@ -1,0 +1,79 @@
+<!-- 钓迹 · 品牌印记 SVG (500×120) -->
+<!-- 用法：在 Vue 组件中 <img src="/src/assets/brand-label.svg" class="brand-label" /> -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 120" width="500" height="120">
+  <defs>
+    <!-- 渐变色 -->
+    <linearGradient id="hookMetal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D4B87A"/>
+      <stop offset="40%" stop-color="#B8956A"/>
+      <stop offset="100%" stop-color="#8B6914"/>
+    </linearGradient>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0D1B2A"/>
+      <stop offset="100%" stop-color="#0A2536"/>
+    </linearGradient>
+    <!-- 金属光泽 -->
+    <linearGradient id="shine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="white" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 深蓝背景圆角矩形 -->
+  <rect width="500" height="120" rx="16" fill="url(#bgGrad)"/>
+
+  <!-- 顶部分割线 -->
+  <line x1="20" y1="2" x2="480" y2="2" stroke="#B8956A" stroke-width="0.6" stroke-opacity="0.25"/>
+
+  <!-- ===== 鱼钩图形（锚定右下区域）===== -->
+  <g transform="translate(345, 10)">
+    <!-- 钩柄竖线 -->
+    <line x1="85" y1="0" x2="85" y2="-35" stroke="url(#hookMetal)" stroke-width="4.5" stroke-linecap="round"/>
+
+    <!-- 钩眼椭圆 -->
+    <ellipse cx="85" cy="-42" rx="7" ry="9" fill="none" stroke="url(#hookMetal)" stroke-width="3.5"/>
+
+    <!-- 钩身主体（抛物线曲线） -->
+    <path d="M 85 0
+             C 85 45, 72 68, 50 90
+             C 28 112, 4 112, 4 98
+             C 4 84, 22 78, 40 88
+             C 56 97, 50 120, 38 128
+             L 35 135"
+          fill="none" stroke="url(#hookMetal)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- 钩尖倒刺 -->
+    <line x1="34" y1="136" x2="26" y2="148" stroke="#B8956A" stroke-width="3" stroke-linecap="round"/>
+    <line x1="38" y1="133" x2="32" y2="144" stroke="#B8956A" stroke-width="2" stroke-linecap="round"/>
+
+    <!-- 金属高光叠加 -->
+    <path d="M 74 8 C 68 32, 58 55, 48 74"
+          fill="none" stroke="url(#shine)" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- ===== 文字区域（左侧）===== -->
+  <g transform="translate(28, 0)">
+    <!-- 中文品牌名 -->
+    <text x="0" y="78"
+          font-family="'PingFang SC', 'Heiti SC', 'Microsoft YaHei', sans-serif"
+          font-size="38" font-weight="600"
+          fill="#F5F0E8" letter-spacing="6">吉趣路亚</text>
+
+    <!-- 英文副文案 -->
+    <text x="2" y="102"
+          font-family="'Avenir', 'Helvetica Neue', Arial, sans-serif"
+          font-size="10.5" font-weight="300"
+          fill="#B8956A" letter-spacing="5.5">JIQI LURE FISHING</text>
+
+    <!-- 装饰横线 -->
+    <line x1="0" y1="116" x2="90" y2="116" stroke="#B8956A" stroke-width="0.6" stroke-opacity="0.45"/>
+    <circle cx="0" cy="116" r="2.5" fill="#B8956A"/>
+  </g>
+
+  <!-- 右上角出品标注 -->
+  <text x="480" y="20"
+        font-family="'PingFang SC', 'Heiti SC', 'Microsoft YaHei', sans-serif"
+        font-size="9" font-weight="400"
+        fill="#B8956A" fill-opacity="0.4"
+        text-anchor="end" letter-spacing="1">出品</text>
+</svg>

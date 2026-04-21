@@ -57,9 +57,12 @@
                   >展开 {{ comment.replies.length }} 条回复</div>
                   <template v-else>
                     <div v-for="reply in comment.replies" :key="reply.id" class="reply-item">
-                      <span class="reply-nickname">{{ reply.user?.nickname || '匿名钓友' }}</span>
-                      <span v-if="reply.replyToNickname" class="reply-to"> 回复 {{ reply.replyToNickname }}</span>
-                      <span class="reply-text">{{ reply.content }}</span>
+                      <div class="reply-header">
+                        <span class="reply-nickname">{{ reply.user?.nickname || '匿名钓友' }}</span>
+                        <span v-if="reply.replyToNickname" class="reply-to"> 回复 {{ reply.replyToNickname }}</span>
+                        <span class="reply-time">{{ formatTime(reply.createdAt) }}</span>
+                      </div>
+                      <div class="reply-text">{{ reply.content }}</div>
                       <span class="reply-btn" @click="handleReply(reply)">回复</span>
                     </div>
                     <div class="replies-toggle" @click="comment._repliesExpanded = false">收起</div>
@@ -410,9 +413,11 @@ const formatTime = (time: string) => {
 }
 .reply-item { font-size: 13px; line-height: 1.6; color: #374151; }
 .reply-item + .reply-item { margin-top: 4px; }
+.reply-header { display: flex; align-items: center; flex-wrap: wrap; gap: 2px; }
 .reply-nickname { color: #0D7377; font-weight: 600; }
 .reply-to { color: #9CA3AF; }
-.reply-text { color: #374151; margin-left: 4px; }
+.reply-time { font-size: 11px; color: #9CA3AF; margin-left: 4px; }
+.reply-text { color: #374151; margin-left: 0; margin-top: 2px; }
 .reply-item .reply-btn {
   margin-left: 8px; font-size: 12px; color: #6B7280; cursor: pointer;
 }

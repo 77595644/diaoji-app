@@ -90,6 +90,8 @@
           {{ loading ? '注册中...' : '注册' }}
         </button>
         <p class="agreement">注册即表示同意《用户协议》和《隐私政策》</p>
+
+        <!-- 移除重复的品牌印记（全局 brand-label 已位于底部） -->
       </div>
 
       <!-- 找回密码 -->
@@ -162,6 +164,11 @@
           🧪 演示体验（无需注册）
         </button>
         <p class="demo-tip">体验完整功能，数据仅本地展示</p>
+      </div>
+
+      <!-- 品牌印记 -->
+      <div class="brand-label">
+        <img src="@/assets/brand-label.svg" alt="吉趣路亚 出品" />
       </div>
     </div>
 
@@ -637,5 +644,27 @@ h1 {
   right: 16px;
   font-size: 11px;
   color: rgba(255,255,255,0.25);
+}
+
+/* 品牌印记 */
+.brand-label {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+  opacity: 0.7;
+}
+
+.brand-label img {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.brand-label--register {
+  margin-top: 20px;
+}
+
+.brand-label--register img {
+  height: 36px;
 }
 </style>

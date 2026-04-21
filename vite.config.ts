@@ -24,6 +24,7 @@ export default defineConfig({
     },
   },
   server: {
+    allowedHosts: ['trycloudflare.com','.trycloudflare.com'], // 允许 cloudflare 访问
     host: true, // 允许外部访问
     port: 3000,
     proxy: {
